@@ -53,6 +53,13 @@ def cryo_abinitio_TO(sym, instack, outvol, cache_file_name=None,
     
     print(f'Loading MRC image stack file: {instack}')
     projs = mrcfile.read(instack)
+
+    assert(len(projs.shape) == 3)
+    assert(projs.shape[0] == projs.shape[1] or projs.shape[1] == projs.shape[2])
+
+    if projs.shape[1] == projs.shape[2]:
+        projs = np.transpose(projs, (1,2,0))
+
     n_images = projs.shape[2]
     print(f'Projections loaded. Using {n_images} projections of size {projs.shape[0]} x {projs.shape[1]}')
     mask_radius = int(np.ceil(projs.shape[0] * mask_radius_perc / 100))
